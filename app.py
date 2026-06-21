@@ -13,7 +13,7 @@ import time
 
 st.set_page_config(
     page_title="X-LEARN AI",
-    page_icon="⚫",
+    page_icon="X",
     layout="centered"
 )
 
@@ -222,9 +222,12 @@ hr {
 }
 
 .feature-icon {
-    font-size: 32px;
+    font-size: 24px;
+    font-weight: 700;
+    color: #c49d6c;
     margin-bottom: 15px;
     opacity: 0.9;
+    letter-spacing: 2px;
 }
 
 .feature-title {
@@ -354,17 +357,17 @@ if st.session_state.page == "home":
     st.markdown("""
     <div class="feature-wrapper">
         <div class="feature-card">
-            <div class="feature-icon">⚡</div>
+            <div class="feature-icon"></div>
             <div class="feature-title">Rapid Analysis</div>
             <div class="feature-text">Get instant AI-driven diagnostic insights within seconds to aid your clinical workflow.</div>
         </div>
         <div class="feature-card">
-            <div class="feature-icon">🎯</div>
+            <div class="feature-icon"></div>
             <div class="feature-title">High Precision</div>
             <div class="feature-text">Trained on thousands of diverse radiographs to ensure robust and reliable abnormality detection.</div>
         </div>
         <div class="feature-card">
-            <div class="feature-icon">🧠</div>
+            <div class="feature-icon"></div>
             <div class="feature-title">Interactive Training</div>
             <div class="feature-text">Test your own diagnostic skills against the AI in timed, gamified training modules.</div>
         </div>
@@ -491,7 +494,7 @@ elif st.session_state.page == "quiz_mode":
 
         with col_q:
             st.markdown(
-                f"<h3 style='color:#7b7d82; font-weight:400;'>Subject {st.session_state.question_number} of {total_questions}</h3>",
+                f"<h3 style='color:#7b7d82; font-weight:400;'>Question {st.session_state.question_number} of {total_questions}</h3>",
                 unsafe_allow_html=True
             )
 
@@ -570,10 +573,10 @@ elif st.session_state.page == "quiz_mode":
 
                 if correct:
                     st.session_state.score += 1
-                    st.toast("Result: Correct", icon="✔️")
+                    st.toast("Result: Correct")
                 else:
                     actual_label = "Fractured" if st.session_state.actual_class == "fractured" else "Normal"
-                    st.toast(f"Result: Incorrect. Expected: {actual_label}", icon="✖️")
+                    st.toast(f"Result: Incorrect. Expected: {actual_label}")
 
                 time.sleep(1.0)     # Brief pause so toast is visible
 
