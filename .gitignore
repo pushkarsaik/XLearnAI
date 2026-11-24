@@ -2,3 +2,5 @@ __pycache__/
 *.pyc
 .streamlit/
 .vscode/
+.venv/
+gradcam_check/

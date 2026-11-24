@@ -6,7 +6,7 @@ import random
 import os
 import time
 
-from gradcam import explain, overlay_heatmap, fracture_probability
+from gradcam import explain, overlay_heatmap, fracture_probability, focus_box
 from feedback import log_event, feedback_form, admin_panel
 
 # =========================================
@@ -49,8 +49,10 @@ CLASS_MAP = {"Fractured": "fractured", "Normal": "not_fractured"}
 LABELS    = {"fractured": "Fractured", "not_fractured": "Normal"}
 
 HEATMAP_NOTE = (
-    "Educational use only, not for diagnosis. The heatmap shows where the AI "
-    "looked, not a verified fracture location."
+    "Educational use only, not for diagnosis. Warm colours show the parts of the "
+    "image that pushed the AI towards 'fracture'; the circle marks the strongest one. "
+    "This is where the AI looked, not a verified fracture location: if the circle is "
+    "on a label or marker instead of bone, don't trust that result."
 )
 
 # =========================================
@@ -466,15 +468,26 @@ elif st.session_state.page == "doubt_solver":
             )
         prob = st.session_state.ds_prob
         cam  = st.session_state.ds_cam
+        p_frac = fracture_probability(prob)
+        sees_fracture = p_frac >= 0.5
 
-        show_heat = st.toggle("Show AI attention heatmap", value=True)
+        # The map always shows evidence FOR fracture. On a "normal" result that
+        # evidence is weak, so the map starts hidden and has no circle.
+        show_heat = st.toggle("Show where the AI looked", value=sees_fracture,
+                              key=f"heat_{upload_key}")
 
         if show_heat:
             strength = st.slider("Heatmap intensity", 0.3, 1.0, 0.8, 0.05)
-            heat_img = overlay_heatmap(img, cam, strength)
+            box = focus_box(cam) if sees_fracture else None
+            heat_img = overlay_heatmap(img, cam, strength, box=box)
             c1, c2 = st.columns(2)
             c1.image(img, caption="Original", use_container_width=True)
-            c2.image(heat_img, caption="Regions that influenced the AI", use_container_width=True)
+            c2.image(
+                heat_img,
+                caption=("Circled: strongest sign of a fracture" if sees_fracture
+                         else "No strong fracture signs; faint hints only"),
+                use_container_width=True,
+            )
         else:
             st.image(img, use_container_width=True)
 
